@@ -1,5 +1,5 @@
-from lib.models.user import User
-from lib.services.auth import Auth
+from models.user import User
+from services.auth import Auth
 
 auth = Auth()
 

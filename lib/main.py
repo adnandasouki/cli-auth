@@ -1,4 +1,4 @@
-from lib.app import screens
+from app import screens
 def main():
 	screens.main_screen()
 

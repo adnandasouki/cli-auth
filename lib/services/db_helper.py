@@ -1,9 +1,9 @@
-from lib.services.hash_helper import HashHelper
-from lib.models.user import User
+from services.hash_helper import HashHelper
+from models.user import User
 import json
 
 class DbHelper:
-    db_path = 'lib/data/users.json'
+    db_path = 'data/users.json'
     
     def __init__(self):
         self.load_db()

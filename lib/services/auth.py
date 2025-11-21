@@ -1,7 +1,8 @@
-from lib.services.auth_contract import AuthContract
-from lib.services.hash_helper import HashHelper
-from lib.services.db_helper import DbHelper
-from lib.models.user import User
+from services.auth_contract import AuthContract
+from services.hash_helper import HashHelper
+from services.db_helper import DbHelper
+from services.validator import Validator
+from models.user import User
 
 class Auth(AuthContract):
     db = DbHelper()
@@ -35,9 +36,18 @@ class Auth(AuthContract):
 
     def signUp(self, user: User):
         try:
-            
             users = self.db.users()
 
+            valid, message = Validator.validate_username(user.username)
+            if not valid:
+                print(message)
+                return
+            
+            valid, message = Validator.validate_password(user.password)
+            if not valid:
+                print(message)
+                return
+            
             if user.username in users:
                 print('username taken.')
                 return
@@ -58,19 +68,30 @@ class Auth(AuthContract):
     def change_username(self, username, newUsername):
         try:
             users = self.db.users()
+
+            valid, message = Validator.validate_username(newUsername)
+            if not valid:
+                print(message)
+                return username
             
-            if newUsername not in users:
-                self.db.update_username(username, newUsername)
-                print(f'username has been updated to {newUsername}')
-                return newUsername
+            if newUsername in users:
+                print('username taken!')
+                return username
             
-            print('username taken!')
-            return
+            self.db.update_username(username, newUsername)
+            print(f'username has been updated to {newUsername}')
+            return newUsername
+
         except Exception as e:
             print('change username error:', e)
             return newUsername
         
     def change_password(self, username, newPassword):
+        valid, message = Validator.validate_password(newPassword)
+        if not valid:
+            print(message)
+            return
+
         self.db.update_password(username, newPassword)
         print('password has been updated!')
         

@@ -6,10 +6,12 @@
 
 - Signup
 - Login
+- Signout
 - change username
 - change password
 - delete account
 
-## Features
+## Services
 
+- Validation
 - Password hashing
