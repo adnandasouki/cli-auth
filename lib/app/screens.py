@@ -1,79 +1,113 @@
 from models.user import User
 from services.auth import Auth
+import os
+from colorama import Fore, Style, init
 
+init(autoreset=True)
 auth = Auth()
 
 def main_screen():
+    os.system('cls')
     while (True):
-        print('----- auth system -----')
-        print("1.login")
-        print("2.signup")
-        print("3.exit")
+        print('===== Authentication System =====')
+        print("1.Sign in")
+        print("2.Sign up")
+        print("3.Exit")
 
-        option = input('select an option: ')
+        option = input('Select an option: ')
 
         if option == '1':
             login_screen()
         elif option == '2':
             signup_screen()
         elif option == '3':
+            os.system('cls')
             break
         else:
-            print('--> select a valid option')
+            os.system('cls')
+            print(Fore.RED + 'select a valid option')
             continue
 
 def login_screen():
-    print('----- Login -----')
-    username = input('username: ')
-    password = input('password: ')
+    os.system('cls')
+    print('===== Login =====')
+    username = input('Username: ')
+    password = input('Password: ')
 
-    if auth.logIn(username, password):
-        account_screen(username)
-    # else:
-    #     return print('invalid credentials')
+    authenticated, message = auth.signIn(username, password)
+    
+    if not authenticated:
+        print(Fore.RED + message)
+        return
+
+    print(message)
+    account_screen(username)
             
 def signup_screen():
-    print('----- Signup -----')
-    username = input('username: ')
-    password = input('password: ')
+    os.system('cls')
+    print('===== Signup =====')
+    username = input('Username: ')
+    password = input('Password: ')
 
-    auth.signUp(User(username, password))
-
+    validated, message = auth.signUp(User(username, password))
     
-
+    if not validated:
+        print(Fore.RED + message)
+        return
+    
+    account_screen(username)
+    
 def account_screen(username):
+    os.system('cls')
     while (True):
-        print(f'----- {username}\'s account -----')
-        print('1.settings')
-        print('2.signout')
+        print(f'===== {username}\'s Account =====')
+        print('1.Settings')
+        print('2.Sign out')
 
-        option = input('select an option: ')
+        option = input('Select an option: ')
         if option == '1':
-            username = settings_screen(username)
+            isDeleted, username = settings_screen(username)
+            if isDeleted:
+                break
         elif option == '2':
-            auth.signOut()
+            message = auth.signOut()
+            os.system('cls')
+            print(Fore.GREEN + message)
             break
 
 def settings_screen(username):
+    os.system('cls')
     while (True):
-        print('----- settings -----')
-        print('1.change username')
-        print('2.change password')
-        print('3.delete account')
-        print('4.back')
+        print('===== Settings =====')
+        print('1.Change username')
+        print('2.Change password')
+        print('3.Delete account')
+        print('4.Back')
 
-        option = input('select an option: ')
+        option = input('Select an option: ')
         if option == '1':
-            newUsername = input('new username: ')
-            username = auth.change_username(username, newUsername)
-            return username
+            os.system('cls')
+            newUsername = input('New username: ')
+            username, message = auth.change_username(username, newUsername)
+            os.system('cls')
+            print(Fore.BLUE + message)
+            return False, username
         elif option == '2':
-            newPassword = input('new password: ')
-            auth.change_password(username, newPassword)
+            os.system('cls')
+            newPassword = input('New password: ')
+            message = auth.change_password(username, newPassword)
+            os.system('cls')
+            print(Fore.BLUE + message)
+            return False, username
         elif option == '3':
-            auth.delete_account(username)
+            isDeleted, message = auth.delete_account(username)
+            os.system('cls')
+            print(Fore.BLUE + message)
+            return isDeleted, username
         elif option == '4':
-            break
+            os.system('cls')
+            return False, username
         else:
-            print('invalid option')
+            os.system('cls')
+            print(Fore.RED + 'Select a valid option')
             continue

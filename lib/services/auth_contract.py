@@ -5,7 +5,7 @@ class AuthContract(ABC):
         pass
 
     @abstractmethod
-    def logIn(self):
+    def signIn(self):
         pass
 
     @abstractmethod

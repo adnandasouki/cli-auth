@@ -8,31 +8,25 @@ class Auth(AuthContract):
     db = DbHelper()
     signedIn = False
 
-    def __init__(self):
-        pass
-
-    def logIn(self, username: str, password: str):
+    def signIn(self, username: str, password: str):
         try:
             users = self.db.users()
 
             if username not in users:
-                print('no account found!')
-                return False
+                return False, "no account found!"
             
             user = users[username]
             login_password = HashHelper.hash_password(password)
             stored_password = user['password']
 
             if login_password == stored_password:
-                print('signed in!')
                 self.signedIn = True
-                return True
+                return True, "signed in!"
             
-            print('wrong password!')
-            return False
+            return False, "wront password!"
+        
         except Exception as e:
-            print('login error:', e)
-            return False
+            return False, f"login error: {e}"
 
     def signUp(self, user: User):
         try:
@@ -40,30 +34,24 @@ class Auth(AuthContract):
 
             valid, message = Validator.validate_username(user.username)
             if not valid:
-                print(message)
-                return
+                return False, message
             
             valid, message = Validator.validate_password(user.password)
             if not valid:
-                print(message)
-                return
+                return False, message
             
             if user.username in users:
-                print('username taken.')
-                return
+                return False, "username taken!"
             
             self.db.createData(user)
-            print('account creted!')
-            return
+            return True, "account created!"
             
         except Exception as e:
-            print('signup error:', e)
-            return
+            return False, f'signup error: {e}'
     
     def signOut(self):
         self.signedIn = False
-        print('signed out!')
-        return
+        return "signed out!"
     
     def change_username(self, username, newUsername):
         try:
@@ -71,32 +59,27 @@ class Auth(AuthContract):
 
             valid, message = Validator.validate_username(newUsername)
             if not valid:
-                print(message)
-                return username
+                return username, message
             
             if newUsername in users:
-                print('username taken!')
-                return username
+                return username, message
             
             self.db.update_username(username, newUsername)
-            print(f'username has been updated to {newUsername}')
-            return newUsername
+            return newUsername, f"username has been updated to {newUsername}"
 
         except Exception as e:
-            print('change username error:', e)
-            return newUsername
+            return newUsername, f"change username error: {e}"
         
     def change_password(self, username, newPassword):
         valid, message = Validator.validate_password(newPassword)
         if not valid:
-            print(message)
-            return
+            return message
 
         self.db.update_password(username, newPassword)
-        print('password has been updated!')
+        return "password has been updated!"
         
         
     def delete_account(self, username):
         self.db.deleteData(username)
-        print('account deleted!')
-        self.signOut()
+        self.signedIn = False
+        return True, "account deleted!"

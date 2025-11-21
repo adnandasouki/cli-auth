@@ -33,7 +33,6 @@ class DbHelper:
         users[newUsername]['username'] = newUsername
         self.save_db(users)
 
-    
     def update_password(self, username, password: str):
         users = self.load_db()
         users[username]['password'] = HashHelper.hash_password(password)
