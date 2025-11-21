@@ -1,4 +1,4 @@
-from utils.hash_helper import HashHelper
+from lib.services.hash_helper import HashHelper
 
 class User:
     def __init__(self, username, password):

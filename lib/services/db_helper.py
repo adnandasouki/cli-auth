@@ -1,9 +1,9 @@
+from lib.services.hash_helper import HashHelper
+from lib.models.user import User
 import json
-from models.user import User
-from utils.hash_helper import HashHelper
 
 class DbHelper:
-    db_path = 'db/users.json'
+    db_path = 'lib/data/users.json'
     
     def __init__(self):
         self.load_db()
@@ -24,10 +24,9 @@ class DbHelper:
         users[user.username] = user.to_json()
         self.save_db(users)
 
-    def userData(self, username):
-        users = self.load_db()
-        return users[username]
-
+    def users(self):
+        return self.load_db()
+    
     def update_username(self, username, newUsername):
         users = self.load_db()
         users[newUsername] = users.pop(username)
