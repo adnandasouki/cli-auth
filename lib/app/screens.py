@@ -38,6 +38,7 @@ def login_screen():
     authenticated, message = auth.signIn(username, password)
     
     if not authenticated:
+        os.system('cls')
         print(Fore.RED + message)
         return
 
@@ -54,6 +55,7 @@ def signup_screen():
     validated, message = auth.signUp(User(username, password))
     
     if not validated:
+        os.system('cls')
         print(Fore.RED + message)
         return
     

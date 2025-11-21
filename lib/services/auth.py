@@ -31,14 +31,16 @@ class Auth(AuthContract):
     def signUp(self, user: User):
         try:
             users = self.db.users()
-
-            valid, message = Validator.validate_username(user.username)
-            if not valid:
-                return False, message
-            
-            valid, message = Validator.validate_password(user.password)
-            if not valid:
-                return False, message
+            try:
+                valid, message = Validator.validate_username(user.username)
+                if not valid:
+                    return False, message
+                
+                valid, message = Validator.validate_password(user.password)
+                if not valid:
+                    return False, message
+            except Exception as e:
+                return False, f'Validation Error: {e}'
             
             if user.username in users:
                 return False, "username taken!"
