@@ -59,24 +59,24 @@ class Auth(AuthContract):
 
             valid, message = Validator.validate_username(newUsername)
             if not valid:
-                return username, message
+                return False, username, message
             
             if newUsername in users:
-                return username, message
+                return False, username, message
             
             self.db.update_username(username, newUsername)
-            return newUsername, f"username has been updated to {newUsername}"
+            return True, newUsername, f"username has been updated to {newUsername}"
 
         except Exception as e:
-            return newUsername, f"change username error: {e}"
+            return False, newUsername, f"change username error: {e}"
         
     def change_password(self, username, newPassword):
         valid, message = Validator.validate_password(newPassword)
         if not valid:
-            return message
+            return False, message
 
         self.db.update_password(username, newPassword)
-        return "password has been updated!"
+        return True, "password has been updated!"
         
         
     def delete_account(self, username):

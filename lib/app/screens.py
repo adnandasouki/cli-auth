@@ -1,7 +1,8 @@
 from models.user import User
 from services.auth import Auth
+import pwinput
+from colorama import Fore, init
 import os
-from colorama import Fore, Style, init
 
 init(autoreset=True)
 auth = Auth()
@@ -32,7 +33,7 @@ def login_screen():
     os.system('cls')
     print('===== Login =====')
     username = input('Username: ')
-    password = input('Password: ')
+    password = pwinput.pwinput('Password: ', mask='•')
 
     authenticated, message = auth.signIn(username, password)
     
@@ -40,14 +41,15 @@ def login_screen():
         print(Fore.RED + message)
         return
 
-    print(message)
+    os.system('cls')
+    print(Fore.GREEN + message)
     account_screen(username)
             
 def signup_screen():
     os.system('cls')
     print('===== Signup =====')
     username = input('Username: ')
-    password = input('Password: ')
+    password = pwinput.pwinput('Password: ', mask='•')
 
     validated, message = auth.signUp(User(username, password))
     
@@ -55,10 +57,11 @@ def signup_screen():
         print(Fore.RED + message)
         return
     
+    os.system('cls')
+    print(Fore.GREEN + message)
     account_screen(username)
     
 def account_screen(username):
-    os.system('cls')
     while (True):
         print(f'===== {username}\'s Account =====')
         print('1.Settings')
@@ -85,25 +88,37 @@ def settings_screen(username):
         print('4.Back')
 
         option = input('Select an option: ')
+        # change username
         if option == '1':
             os.system('cls')
             newUsername = input('New username: ')
-            username, message = auth.change_username(username, newUsername)
+            username_changed, username, message = auth.change_username(username, newUsername)
+            if not username_changed:
+                os.system('cls')
+                print(Fore.RED + message)
+                continue
             os.system('cls')
-            print(Fore.BLUE + message)
-            return False, username
+            print(Fore.GREEN + message)
+            continue
+        # change password
         elif option == '2':
             os.system('cls')
-            newPassword = input('New password: ')
-            message = auth.change_password(username, newPassword)
+            newPassword = pwinput.pwinput('Password: ', mask='•')
+            pass_changed, message = auth.change_password(username, newPassword)
+            if not pass_changed:
+                os.system('cls')
+                print(Fore.RED + message)
+                continue
             os.system('cls')
-            print(Fore.BLUE + message)
-            return False, username
+            print(Fore.GREEN + message)
+            continue
+        # delete account
         elif option == '3':
             isDeleted, message = auth.delete_account(username)
             os.system('cls')
-            print(Fore.BLUE + message)
+            print(Fore.GREEN + message)
             return isDeleted, username
+        # back
         elif option == '4':
             os.system('cls')
             return False, username
